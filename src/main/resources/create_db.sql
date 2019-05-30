@@ -1,0 +1,1 @@
+CREATE DATABASE IF NOT EXISTS `sql_history` DEFAULT CHARACTER SET utf8mb4 collate utf8mb4_unicode_ci;

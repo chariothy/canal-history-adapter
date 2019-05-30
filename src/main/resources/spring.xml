@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="propertyConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+                <value>classpath:application-local.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClass}"/>
+        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="autoCommit" value="true"/>
+        <property name="connectionTestQuery" value="SELECT 1"/>
+        <property name="poolName" value="canal"/>
+    </bean>
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="socketAddress" class="java.net.InetSocketAddress">
+        <constructor-arg name="hostname" value="${canal.ip}"/>
+        <constructor-arg name="port" value="${canal.port}"/>
+    </bean>
+    <bean id="simpleCanal" class="com.alibaba.otter.canal.client.impl.SimpleCanalConnector">
+        <constructor-arg name="address" ref="socketAddress"/>
+        <constructor-arg name="destination" value="${canal.dest}"/>
+        <constructor-arg name="username" value="${canal.user}"/>
+        <constructor-arg name="password" value="${canal.password}"/>
+    </bean>
+</beans>
